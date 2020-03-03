@@ -1,0 +1,29 @@
+#!/bin/bash
+
+log () {
+  >&2 echo "$@"
+}
+
+print_usage () {
+  log "USAGE: $0 <from_container> [backup_target] [archive_name]"
+  log " e.g.: $0 romantic_galois ./"
+}
+
+if [ $# -eq 0 ] || [ $# -gt 99 ]; then
+  log "ERROR: Invalid argument count!"
+  print_usage
+  exit 127
+fi
+
+if [ -z "$1" ]; then
+  log "ERROR: Missing required argument 'from_container'!"
+  print_usage
+  exit 1
+fi
+
+FROM_CONTAINER="$1"
+BACKUP_TARGET="$(realpath ${2:-`pwd`})"
+ARCHIVE_NAME="${3:-backup-${FROM_CONTAINER}-`date '+%Y%m%d-%H%M%S-%Z'`.tgz}"
+MOUNT_POINTS="$(docker inspect $FROM_CONTAINER | jq -r '.[0].Mounts | .[] | .Destination')"
+
+exec docker run --rm --volumes-from "${FROM_CONTAINER}" -v "${BACKUP_TARGET}:/backup" alpine:latest sh -c "apk add tar &>/dev/null && tar -cvzf /backup/${ARCHIVE_NAME} $(echo "$MOUNT_POINTS" | tr '\n' ' ')"%

@@ -1,0 +1,2 @@
+#!/bin/bash
+/sbin/ifconfig eth0 | /usr/bin/awk '/inet addr/{print $2}' | /usr/bin/awk -F: '/addr/{print $2}'

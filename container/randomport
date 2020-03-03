@@ -1,0 +1,11 @@
+#!/bin/bash
+
+START=${1:-49152}
+END=${2:-65535}
+
+if [ "$START" -le 0 ] || [ "$END" -gt 65535 ] || [ "$END" -le "$START" ]; then
+  >&2 echo "ERROR: Port range invalid!"
+  exit 1
+fi
+
+shuf -i ${START}-${END} -n 1

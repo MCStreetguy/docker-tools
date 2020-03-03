@@ -1,0 +1,2 @@
+#!/bin/bash
+/sbin/ip route show default | /usr/bin/awk '/default/{print $3}'
