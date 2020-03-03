@@ -9,11 +9,15 @@ These simplify several maintenance tasks or shorten common operations against th
 
 ### `docker-backup-volume`
 
-_WIP_
+Backup a volume by it's name.
+
+### `docker-backup-container-volumes`
+
+Backup all volumes used by a specific container.
 
 ### `docker-remove-dangling`
 
-_WIP_
+Cleanup dangling data from Docker. (images, volumes, networks)
 
 ## Container Scripts
 
