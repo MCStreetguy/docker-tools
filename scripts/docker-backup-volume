@@ -26,4 +26,4 @@ ARCHIVE_NAME="${3:-volume-backup_${VOLUME_NAME}_`date '+%Y%m%d-%H%M%S-%Z'`.tgz}"
 
 log "INFO: Backing up volume '${VOLUME_NAME}' into '${BACKUP_TARGET}/${ARCHIVE_NAME}'..."
 
-exec docker run --rm -v "${VOLUME_NAME}:/source_volume" -v "${BACKUP_TARGET}:/backup" alpine:latest sh -c "apk add tar &>/dev/null && cd /source_volume && tar -cvzf /backup/${ARCHIVE_NAME} ."
+exec docker run --rm -v "${VOLUME_NAME}:/source_volume" -v "${BACKUP_TARGET}:/backup" alpine:latest sh -c "apk add tar &>/dev/null && tar -cvzf /backup/${ARCHIVE_NAME} -C /source_volume ."
