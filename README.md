@@ -44,31 +44,3 @@ As the IP is not known during build-time this little helper can come in handy if
 $ containerip
 172.21.0.2
 ```
-
-### `randomport`
-
-Generate a random port number. This may be useful for some dynamic network configuration or if your application needs to listen on ephermal ports.
-Not provided any arguments, the script creates a private (/dynamic/ephermal) port number in the range of `49152-65535`.
-
-```bash
-$ randomport
-60696
-```
-
-You may provide up to two additional arguments to change the port number range used.
-The syntax is:
-
-```bash
-randomport [minimum_port=49152] [maximum_port=65535]
-```
-
-So for example:
-
-```bash
-$ randomport 1024
-10838
-$ randomport 1024 1500
-1365
-```
-
-If you exceed the valid port range of `1-65535` or the minimum and maximum port numbers overlap, the script will print an error message and exit with code `1`.
