@@ -10,49 +10,40 @@ if [ "$1" == "images" ]; then
     echo "WARNING: This will remove all dangling images!"
     echo "The operation cannot be undone as data will be erased from the disk directly!"
 
-    are_you_sure && docker image ls --filter "dangling=true" --quiet | xargs docker image rm
+    are_you_sure && docker image ls --filter "dangling=true" --quiet | xargs docker image rm || exit 0
 elif [ "$1" == "volumes" ]; then
     echo "WARNING: This will remove all dangling volumes!"
     echo "The operation cannot be undone as data will be erased from the disk directly!"
 
-    are_you_sure && docker volume ls --filter "dangling=true" --quiet | xargs docker volume rm
+    are_you_sure && docker volume ls --filter "dangling=true" --quiet | xargs docker volume rm || exit 0
 elif [ "$1" == "networks" ]; then
-    echo "WARNING: This will remove all unused networks!"
+    docker network prune
+elif [ "$1" == "containers" ]; then
+    docker container prune
+else
+    echo "WARNING: This will remove all local dangling images, volumes and networks!"
     echo "The operation cannot be undone as data will be erased from the disk directly!"
 
-    are_you_sure && docker network prune --force
-elif [ "$1" == "containers" ]; then
+    if are_you_sure; then
+        echo ""
 
+        echo "Removing images..."
+        docker image ls --filter "dangling=true" --quiet | xargs docker image rm
+        echo ""
 
-else
+        echo "Removing volumes..."
+        docker volume ls --filter "dangling=true" --quiet | xargs docker volume rm
+        echo ""
 
+        echo "Removing networks..."
+        docker network ls --filter "dangling=true" --quiet | xargs docker network rm
+        echo ""
 
+        echo ""
+    else
+        exit 0
+    fi
 fi
 
-echo "WARNING: This will remove all local dangling images, volumes and networks!"
-echo "The operation cannot be undone as data will be erased from the disk directly!"
-
-read -r -p "Are you sure to continue? [y/N] " response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-    echo ""
-
-    echo "Removing images..."
-    docker image ls --filter "dangling=true" --quiet | xargs docker image rm
-    echo ""
-
-    echo "Removing volumes..."
-    docker volume ls --filter "dangling=true" --quiet | xargs docker volume rm
-    echo ""
-
-    echo "Removing networks..."
-    docker network ls --filter "dangling=true" --quiet | xargs docker network rm
-    echo ""
-
-    echo ""
-    echo "Done. To also remove all stopped containers please run the 'docker container prune' or 'docker system prune' manually."
-    exit 0
-else
-    echo ""
-    echo "Phew, that was close..."
-    exit 0
-fi
+echo "Done."
+exit 0
